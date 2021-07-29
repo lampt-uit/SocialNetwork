@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { login } from '../redux/actions/auth.action';
 
 const Login = () => {
+	const { auth } = useSelector((state) => state);
+	const history = useHistory();
 	const initialState = { email: '', password: '' };
 	const [userData, setUserData] = useState(initialState);
 	const { email, password } = userData;
@@ -22,6 +24,12 @@ const Login = () => {
 
 		dispatch(login(userData));
 	};
+
+	useEffect(() => {
+		if (auth.token) history.push('/');
+		// if (auth.token) window.location.href = '/';
+	}, [auth.token, history]);
+
 	return (
 		<div className='auth_page'>
 			<form onSubmit={handleSubmit}>

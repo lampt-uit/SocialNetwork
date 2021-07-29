@@ -7,6 +7,8 @@ import PageRender from './PageRender';
 import Login from './pages/login';
 import Home from './pages/home';
 import Alert from './components/alert/Alert';
+import Header from './components/Header';
+
 import { refreshToken } from './redux/actions/auth.action';
 
 function App() {
@@ -23,6 +25,7 @@ function App() {
 
 			<div className='App'>
 				<div className='main'>
+					{auth.token && <Header />}
 					<Route exact path='/' component={auth.token ? Home : Login} />
 					<Route exact path='/:page' component={PageRender} />
 					<Route exact path='/:page/:id' component={PageRender} />
