@@ -9,7 +9,11 @@ const Profile = () => {
 	const { profile } = useSelector((state) => state);
 	return (
 		<div className='profile'>
-			{profile.loading ? <img src={LoadIcon} alt='loading' /> : <Info />}
+			{profile.loading ? (
+				<img src={LoadIcon} className='d-block mx-auto my-4' alt='loading' />
+			) : (
+				<Info />
+			)}
 			<Posts />
 		</div>
 	);
