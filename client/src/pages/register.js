@@ -39,7 +39,7 @@ const Register = () => {
 	};
 	return (
 		<div className='auth_page'>
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={handleSubmit} className='m-2'>
 				<h3 className='text-uppercase text-center mb-4'>Social Network</h3>
 				<div className='form-group'>
 					<label htmlFor='fullname'>Full name</label>
@@ -165,7 +165,7 @@ const Register = () => {
 				</button>
 				<p className='my-2'>
 					Already have an account?{' '}
-					<Link to='/login' style={{ color: 'crimson' }}>
+					<Link to='/' style={{ color: 'crimson' }}>
 						Login now
 					</Link>
 				</p>

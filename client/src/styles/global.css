@@ -37,17 +37,14 @@ img {
 	object-fit: cover;
 }
 
-.avatar {
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-}
-
 /* ---------Auth--------- */
-@import url('./styles/auth.css');
+@import url('./auth.css');
 
 /* ---------Loading--------- */
-@import url('./styles/loading.css');
+@import url('./loading.css');
 
 /* ---------Header--------- */
-@import url('./styles/header.css');
+@import url('./header.css');
+
+/* ---------Avatar--------- */
+@import url('./avatar.css');

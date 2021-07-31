@@ -38,7 +38,7 @@ const authController = {
 			const access_token = createAccessToken({ id: newUser._id });
 			const refresh_token = createRefreshToken({ id: newUser._id });
 
-			res.cookie('refresh_token', refresh_token, {
+			res.cookie('refreshtoken', refresh_token, {
 				httpOnly: true,
 				path: '/api/refresh_token',
 				maxAge: 30 * 24 * 60 * 60 * 1000
@@ -77,7 +77,7 @@ const authController = {
 			const access_token = createAccessToken({ id: user._id });
 			const refresh_token = createRefreshToken({ id: user._id });
 
-			res.cookie('refresh_token', refresh_token, {
+			res.cookie('refreshtoken', refresh_token, {
 				httpOnly: true,
 				path: '/api/refresh_token',
 				maxAge: 30 * 24 * 60 * 60 * 1000
@@ -97,7 +97,7 @@ const authController = {
 	},
 	logout: async (req, res) => {
 		try {
-			res.clearCookie('refresh_token', { path: '/api/refresh_token' });
+			res.clearCookie('refreshtoken', { path: '/api/refresh_token' });
 			return res.json({ msg: 'Logged out' });
 		} catch (error) {
 			return res.status(500).json({ msg: error.message });
@@ -105,7 +105,8 @@ const authController = {
 	},
 	generateAccessToken: async (req, res) => {
 		try {
-			const rf_token = req.cookies.refresh_token;
+			const rf_token = req.cookies.refreshtoken;
+			if (!rf_token) return res.status(400).json({ msg: 'Please login now' });
 			// res.json({ rf_token });
 
 			jwt.verify(

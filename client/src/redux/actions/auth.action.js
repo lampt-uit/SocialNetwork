@@ -62,7 +62,6 @@ export const refreshToken = () => async (dispatch) => {
 		}
 	}
 };
-
 export const register = (data) => async (dispatch) => {
 	const check = valid(data);
 
@@ -101,7 +100,7 @@ export const register = (data) => async (dispatch) => {
 
 export const logout = () => async (dispatch) => {
 	try {
-		localStorage.removeItem('firsLogin');
+		localStorage.removeItem('firstLogin');
 		await postDataAPI('logout');
 		window.location.href = '/';
 	} catch (error) {

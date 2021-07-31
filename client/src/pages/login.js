@@ -27,7 +27,6 @@ const Login = () => {
 
 	useEffect(() => {
 		if (auth.token) history.push('/');
-		// if (auth.token) window.location.href = '/';
 	}, [auth.token, history]);
 
 	return (
