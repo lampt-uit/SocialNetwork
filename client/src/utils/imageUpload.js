@@ -11,3 +11,27 @@ export const checkImage = (file) => {
 
 	return error;
 };
+
+export const imageUpload = async (images) => {
+	let imageArray = [];
+	for (const item of images) {
+		const formData = new FormData();
+		formData.append('file', item);
+		formData.append('upload_preset', 'uctzbygv');
+		formData.append('cloud_name', 'lampt');
+
+		const res = await fetch(
+			'https://api.cloudinary.com/v1_1/lampt/image/upload',
+			{
+				method: 'POST',
+				body: formData
+			}
+		);
+
+		const data = await res.json();
+		// console.log(data);
+
+		imageArray.push({ public_id: data.public_id, url: data.secure_url });
+	}
+	return imageArray;
+};
