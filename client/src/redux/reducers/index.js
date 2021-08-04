@@ -4,5 +4,14 @@ import auth from './auth.reducer';
 import alert from './alert.reducer';
 import theme from './theme.reducer';
 import profile from './profile.reducer';
+import status from './status.reducer';
+import homePost from './post.reducer';
 
-export default combineReducers({ auth, alert, theme, profile });
+export default combineReducers({
+	auth,
+	alert,
+	theme,
+	profile,
+	status,
+	homePost
+});
