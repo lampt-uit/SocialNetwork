@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { GLOBALTYPES } from '../redux/actions/global.type';
-import { createPost } from '../redux/actions/post.action';
+import { createPost, updatePost } from '../redux/actions/post.action';
 
 const StatusModal = () => {
-	const { auth, theme } = useSelector((state) => state);
+	const { auth, theme, status } = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const videoRef = useRef();
 	const refCanvas = useRef();
@@ -41,6 +41,7 @@ const StatusModal = () => {
 		setImages(newArray);
 	};
 
+	//Turn on Steam
 	const handleStream = () => {
 		setStream(true);
 		//Use camera of devices
@@ -57,6 +58,8 @@ const StatusModal = () => {
 				.catch((error) => console.log(error));
 		}
 	};
+
+	//Take photo
 	const handleCapture = () => {
 		const width = videoRef.current.clientWidth;
 		const height = videoRef.current.clientHeight;
@@ -70,6 +73,7 @@ const StatusModal = () => {
 		setImages([...images, { camera: URL }]);
 	};
 
+	//Stop stream
 	const handleStopStream = () => {
 		tracks.stop();
 		setStream(false);
@@ -82,13 +86,25 @@ const StatusModal = () => {
 				type: GLOBALTYPES.ALERT,
 				payload: { errors: 'Please add your photo.' }
 			});
-		dispatch(createPost({ content, images, auth }));
+
+		if (status.onEdit) {
+			dispatch(updatePost({ content, images, auth, status }));
+		} else {
+			dispatch(createPost({ content, images, auth }));
+		}
 
 		setContent('');
 		setImages([]);
 		if (tracks) tracks.stop();
 		dispatch({ type: GLOBALTYPES.STATUS, payload: false });
 	};
+
+	useEffect(() => {
+		if (status.onEdit) {
+			setContent(status.content);
+			setImages(status.images);
+		}
+	}, [status]);
 	return (
 		<div className='status_modal'>
 			<form onSubmit={handleSubmit}>
@@ -114,7 +130,13 @@ const StatusModal = () => {
 							<div key={index} id='file_img'>
 								<img
 									//Check image selfie or image upload
-									src={image.camera ? image.camera : URL.createObjectURL(image)}
+									src={
+										image.camera
+											? image.camera
+											: image.url
+											? image.url
+											: URL.createObjectURL(image)
+									}
 									alt='images'
 									className='img-thumbnail'
 									style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
