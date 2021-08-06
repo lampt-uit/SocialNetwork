@@ -5,7 +5,6 @@ const commentController = {
 	createComment: async (req, res) => {
 		try {
 			const { postId, content, tag, reply } = req.body;
-			console.log({ postId, content, tag, reply });
 
 			const newComment = new Comments({
 				user: req.user._id,

@@ -37,7 +37,7 @@ const InputComment = ({ children, post }) => {
 				value={content}
 				onChange={(e) => setContent(e.target.value)}
 			/>
-			<button type='submit' className='postBtn'>
+			<button type='submit' className='postBtn ml-2'>
 				Post
 			</button>
 		</form>
