@@ -13,6 +13,7 @@ app.use(cookieParser());
 app.use('/api', require('./routes/auth.router'));
 app.use('/api', require('./routes/user.router'));
 app.use('/api', require('./routes/post.router'));
+app.use('/api', require('./routes/comment.router'));
 
 const URI = process.env.MONGODB_URL;
 mongoose.connect(
