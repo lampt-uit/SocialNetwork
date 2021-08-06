@@ -1,4 +1,8 @@
-import { postDataAPI, patchDataAPI } from '../../utils/fetchData';
+import {
+	postDataAPI,
+	patchDataAPI,
+	deleteDataAPI
+} from '../../utils/fetchData';
 import { GLOBALTYPES, EditData, DeleteData } from './global.type';
 import { POST_TYPES } from './post.action';
 
@@ -11,7 +15,11 @@ export const createComment =
 		dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
 
 		try {
-			const data = { ...newComment, postId: post._id };
+			const data = {
+				...newComment,
+				postId: post._id,
+				postUserId: post.user._id
+			};
 			const res = await postDataAPI('comment', data, auth.token);
 			// console.log(res);
 
@@ -84,6 +92,39 @@ export const unLikeComment =
 		dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
 		try {
 			await patchDataAPI(`comment/${comment._id}/unlike`, null, auth.token);
+		} catch (error) {
+			dispatch({
+				type: GLOBALTYPES.ALERT,
+				payload: { errors: error.response.data.msg }
+			});
+		}
+	};
+
+export const deleteComment =
+	({ post, auth, comment }) =>
+	async (dispatch) => {
+		//If Father comment is deleted => Children comment also deleted
+		const deleteArray = [
+			...post.comments.filter((cm) => cm.reply === comment._id),
+			comment
+		];
+		// console.log(deleteArray);
+
+		//Update Post => delete comment deleted
+		const newPost = {
+			...post,
+			// Find comment => don't into deleteArray
+			comments: post.comments.filter(
+				(cm) => !deleteArray.find((da) => cm._id === da._id)
+			)
+		};
+
+		dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+
+		try {
+			deleteArray.forEach((item) => {
+				deleteDataAPI(`comment/${item._id}`, auth.token);
+			});
 		} catch (error) {
 			dispatch({
 				type: GLOBALTYPES.ALERT,

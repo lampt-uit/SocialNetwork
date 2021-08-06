@@ -6,18 +6,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import Avatar from '../../Avatar';
 import LikeButton from '../../LikeButton';
 import CommentMenu from './CommentMenu';
+import InputComment from '../InputComment';
 import {
 	updateComment,
 	likeComment,
 	unLikeComment
 } from '../../../redux/actions/comment.action';
 
-const CommentCard = ({ comment, post }) => {
+const CommentCard = ({ children, comment, post, commentId }) => {
 	const { auth } = useSelector((state) => state);
 	const [content, setContent] = useState('');
 	const [readMore, setReadMore] = useState(false);
 	const [isLike, setIsLike] = useState(false);
 	const [onEdit, setOnEdit] = useState(false);
+	const [onReply, setOnReply] = useState(false);
 
 	//Use to avoid spammer
 	const [loadLike, setLoadLike] = useState(false);
@@ -26,6 +28,8 @@ const CommentCard = ({ comment, post }) => {
 
 	useEffect(() => {
 		setContent(comment.content);
+		setIsLike(false);
+		setOnReply(false);
 
 		//Check like comment of auth
 		if (comment.likes.find((like) => like._id === auth.user._id))
@@ -59,6 +63,11 @@ const CommentCard = ({ comment, post }) => {
 		}
 	};
 
+	const handleReply = () => {
+		if (onReply) return setOnReply(false);
+		setOnReply({ ...comment, commentId });
+	};
+
 	const styleCard = {
 		opacity: comment._id ? 1 : 0.5,
 		pointerEvents: comment._id ? 'inherit' : 'none'
@@ -80,6 +89,11 @@ const CommentCard = ({ comment, post }) => {
 						/>
 					) : (
 						<div>
+							{comment.tag && comment.tag._id !== comment.user._id && (
+								<Link to={`/profile/${comment.tag._id}`} className='ml-1'>
+									@{comment.tag.username}
+								</Link>
+							)}
 							<span>
 								{content.length < 100
 									? content
@@ -117,7 +131,9 @@ const CommentCard = ({ comment, post }) => {
 								</small>
 							</>
 						) : (
-							<small className='font-weight-bold mr-3'>Reply</small>
+							<small className='font-weight-bold mr-3' onClick={handleReply}>
+								{onReply ? 'Cancel' : 'Reply'}
+							</small>
 						)}
 					</div>
 				</div>
@@ -125,12 +141,7 @@ const CommentCard = ({ comment, post }) => {
 					className='d-flex align-items-center mx-2'
 					style={{ cursor: 'pointer' }}
 				>
-					<CommentMenu
-						comment={comment}
-						post={post}
-						auth={auth}
-						setOnEdit={setOnEdit}
-					/>
+					<CommentMenu comment={comment} post={post} setOnEdit={setOnEdit} />
 					<LikeButton
 						isLike={isLike}
 						handleLike={handleLike}
@@ -138,6 +149,15 @@ const CommentCard = ({ comment, post }) => {
 					/>
 				</div>
 			</div>
+
+			{onReply && (
+				<InputComment post={post} onReply={onReply} setOnReply={setOnReply}>
+					<Link to={`/profile/${onReply.user._id}`} className='mr-1'>
+						@{onReply.user.username}:
+					</Link>
+				</InputComment>
+			)}
+			{children}
 		</div>
 	);
 };

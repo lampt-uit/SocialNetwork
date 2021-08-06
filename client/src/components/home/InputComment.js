@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { createComment } from '../../redux/actions/comment.action';
 
-const InputComment = ({ children, post }) => {
+const InputComment = ({ children, post, onReply, setOnReply }) => {
 	const { auth } = useSelector((state) => state);
 	const dispatch = useDispatch();
 
@@ -13,7 +13,10 @@ const InputComment = ({ children, post }) => {
 		e.preventDefault();
 
 		//Does not exist  =>  don't something
-		if (!content.trim()) return;
+		if (!content.trim()) {
+			if (setOnReply) return setOnReply(false);
+			return;
+		}
 
 		setContent('');
 
@@ -21,11 +24,15 @@ const InputComment = ({ children, post }) => {
 			content,
 			likes: [],
 			user: auth.user,
-			createdAt: new Date().toISOString()
+			createdAt: new Date().toISOString(),
+			reply: onReply && onReply.commentId,
+			tag: onReply && onReply.user
 		};
 		// console.log(newComment);
 
 		dispatch(createComment({ post, newComment, auth }));
+
+		if (setOnReply) return setOnReply(false);
 	};
 	return (
 		<form className='card-footer comment_input' onSubmit={handleSubmit}>
