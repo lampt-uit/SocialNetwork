@@ -1,10 +1,10 @@
 import React from 'react';
 
-const CommentMenu = ({ comment, post, auth }) => {
+const CommentMenu = ({ comment, post, auth, setOnEdit }) => {
 	const MenuItem = () => {
 		return (
 			<>
-				<div className='dropdown-item'>
+				<div className='dropdown-item' onClick={() => setOnEdit(true)}>
 					<span className='material-icons'>create</span> Edit
 				</div>
 				<div className='dropdown-item'>

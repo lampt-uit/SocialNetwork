@@ -25,7 +25,7 @@ const InputComment = ({ children, post }) => {
 		};
 		// console.log(newComment);
 
-		dispatch(createComment(post, newComment, auth));
+		dispatch(createComment({ post, newComment, auth }));
 	};
 	return (
 		<form className='card-footer comment_input' onSubmit={handleSubmit}>
