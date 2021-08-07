@@ -1,5 +1,20 @@
 const Posts = require('../models/post.model');
 
+class APIfeatures {
+	constructor(query, queryString) {
+		this.query = query;
+		this.queryString = queryString;
+	}
+
+	paginating() {
+		const page = this.queryString.page * 1 || 1;
+		const limit = this.queryString.limit * 1 || 9;
+		const skip = (page - 1) * limit;
+		this.query = this.query.skip(skip).limit(limit);
+		return this;
+	}
+}
+
 const postController = {
 	createPost: async (req, res) => {
 		try {
@@ -22,9 +37,13 @@ const postController = {
 	getPosts: async (req, res) => {
 		try {
 			//Get POST myself or post's have been following
-			const posts = await Posts.find({
-				user: [...req.user.following, req.user._id]
-			})
+			const features = new APIfeatures(
+				Posts.find({
+					user: [...req.user.following, req.user._id]
+				}),
+				req.query
+			).paginating();
+			const posts = await features.query
 				.sort('-createdAt')
 				.populate('user likes', 'avatar username fullname')
 				.populate({
@@ -127,9 +146,12 @@ const postController = {
 	},
 	getUserPosts: async (req, res) => {
 		try {
-			const posts = await Posts.find({ user: req.params.id }).sort(
-				'-createdAt'
-			);
+			const features = new APIfeatures(
+				Posts.find({ user: req.params.id }),
+				req.query
+			).paginating();
+
+			const posts = await features.query.sort('-createdAt');
 			res.json({ posts, result: posts.length });
 		} catch (error) {
 			return res.status(500).json({ msg: error.message });
@@ -147,6 +169,34 @@ const postController = {
 					}
 				});
 			res.json({ post });
+		} catch (error) {
+			return res.status(500).json({ msg: error.message });
+		}
+	},
+	getPostsDiscover: async (req, res) => {
+		try {
+			//Get POST myself or post's have been following
+			const features = new APIfeatures(
+				Posts.find({
+					user: { $nin: [...req.user.following, req.user._id] }
+				}),
+				req.query
+			).paginating();
+			const posts = await features.query.sort('-createdAt');
+			// .populate('user likes', 'avatar username fullname')
+			// .populate({
+			// 	path: 'comments',
+			// 	populate: {
+			// 		path: 'user likes',
+			// 		select: '-password'
+			// 	}
+			// });
+
+			res.json({
+				msg: 'Success',
+				result: posts.length,
+				posts
+			});
 		} catch (error) {
 			return res.status(500).json({ msg: error.message });
 		}
