@@ -1,13 +1,19 @@
 import { GLOBALTYPES } from './global.type';
 import { imageUpload } from '../../utils/imageUpload';
-import { getDataAPI, postDataAPI, patchDataAPI } from '../../utils/fetchData';
+import {
+	getDataAPI,
+	postDataAPI,
+	patchDataAPI,
+	deleteDataAPI
+} from '../../utils/fetchData';
 
 export const POST_TYPES = {
 	CREATE_POST: 'CREATE_POST',
 	LOADING_POST: 'LOADING_POST',
 	GET_POSTS: 'GET_POSTS',
 	UPDATE_POST: 'UPDATE_POST',
-	GET_POST: 'GET_POST'
+	GET_POST: 'GET_POST',
+	DELETE_POST: 'DELETE_POST'
 };
 
 export const createPost =
@@ -144,5 +150,19 @@ export const getPost =
 					payload: { erros: error.response.data.msg }
 				});
 			}
+		}
+	};
+
+export const deletePost =
+	({ post, auth }) =>
+	async (dispatch) => {
+		dispatch({ type: POST_TYPES.DELETE_POST, payload: post });
+		try {
+			deleteDataAPI(`post/${post._id}`, auth.token);
+		} catch (error) {
+			dispatch({
+				type: GLOBALTYPES.ALERT,
+				payload: { errors: error.response.data.msg }
+			});
 		}
 	};

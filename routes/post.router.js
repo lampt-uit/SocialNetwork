@@ -10,7 +10,8 @@ router
 router
 	.route('/post/:id')
 	.patch(auth, postController.updatePost)
-	.get(auth, postController.getPost);
+	.get(auth, postController.getPost)
+	.delete(auth, postController.deletePost);
 router.route('/post/:id/like').patch(auth, postController.likePost);
 router.route('/post/:id/unlike').patch(auth, postController.unLikePost);
 router.get('/user_posts/:id', auth, postController.getUserPosts);

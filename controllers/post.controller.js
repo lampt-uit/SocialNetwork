@@ -1,4 +1,5 @@
 const Posts = require('../models/post.model');
+const Comments = require('../models/comment.model');
 
 class APIfeatures {
 	constructor(query, queryString) {
@@ -107,13 +108,16 @@ const postController = {
 			if (post.length > 0)
 				return res.status(400).json({ msg: 'You liked this post.' });
 
-			await Posts.findOneAndUpdate(
+			const like = await Posts.findOneAndUpdate(
 				{ _id: req.params.id },
 				{
 					$push: { likes: req.user._id }
 				},
 				{ new: true }
 			);
+
+			if (!like)
+				return res.status(400).json({ msg: 'This post does not exist.' });
 
 			res.json({ msg: 'Liked Post' });
 		} catch (error) {
@@ -131,13 +135,16 @@ const postController = {
 
 			// if (!post) return res.status(400).json({ msg: 'You liked this post.' });
 
-			await Posts.findOneAndUpdate(
+			const like = await Posts.findOneAndUpdate(
 				{ _id: req.params.id },
 				{
 					$pull: { likes: req.user._id }
 				},
 				{ new: true }
 			);
+
+			if (!like)
+				return res.status(400).json({ msg: 'This post does not exist.' });
 
 			res.json({ msg: 'UnLiked Post' });
 		} catch (error) {
@@ -168,6 +175,9 @@ const postController = {
 						select: '-password'
 					}
 				});
+
+			if (!post)
+				return res.status(400).json({ msg: 'This post does not exist.' });
 			res.json({ post });
 		} catch (error) {
 			return res.status(500).json({ msg: error.message });
@@ -197,6 +207,19 @@ const postController = {
 				result: posts.length,
 				posts
 			});
+		} catch (error) {
+			return res.status(500).json({ msg: error.message });
+		}
+	},
+	deletePost: async (req, res) => {
+		try {
+			//Must be post of yourself
+			const post = await Posts.findOneAndDelete({
+				_id: req.params.id,
+				user: req.user._id
+			});
+			await Comments.deleteMany({ _id: { $in: post.comments } });
+			res.json({ msg: 'Delete Post Success' });
 		} catch (error) {
 			return res.status(500).json({ msg: error.message });
 		}
