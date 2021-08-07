@@ -54,7 +54,15 @@ const postController = {
 					content,
 					images
 				}
-			).populate('user likes', 'avatar username fullname');
+			)
+				.populate('user likes', 'avatar username fullname')
+				.populate({
+					path: 'comments',
+					populate: {
+						path: 'user likes',
+						select: '-password'
+					}
+				});
 
 			res.json({
 				msg: 'Updated Post',
@@ -113,6 +121,32 @@ const postController = {
 			);
 
 			res.json({ msg: 'UnLiked Post' });
+		} catch (error) {
+			return res.status(500).json({ msg: error.message });
+		}
+	},
+	getUserPosts: async (req, res) => {
+		try {
+			const posts = await Posts.find({ user: req.params.id }).sort(
+				'-createdAt'
+			);
+			res.json({ posts, result: posts.length });
+		} catch (error) {
+			return res.status(500).json({ msg: error.message });
+		}
+	},
+	getPost: async (req, res) => {
+		try {
+			const post = await Posts.findById(req.params.id)
+				.populate('user likes', 'avatar username fullname')
+				.populate({
+					path: 'comments',
+					populate: {
+						path: 'user likes',
+						select: '-password'
+					}
+				});
+			res.json({ post });
 		} catch (error) {
 			return res.status(500).json({ msg: error.message });
 		}
