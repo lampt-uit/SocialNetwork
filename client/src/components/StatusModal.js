@@ -5,7 +5,7 @@ import { GLOBALTYPES } from '../redux/actions/global.type';
 import { createPost, updatePost } from '../redux/actions/post.action';
 
 const StatusModal = () => {
-	const { auth, theme, status } = useSelector((state) => state);
+	const { auth, theme, status, socket } = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const videoRef = useRef();
 	const refCanvas = useRef();
@@ -90,7 +90,7 @@ const StatusModal = () => {
 		if (status.onEdit) {
 			dispatch(updatePost({ content, images, auth, status }));
 		} else {
-			dispatch(createPost({ content, images, auth }));
+			dispatch(createPost({ content, images, auth, socket }));
 		}
 
 		setContent('');

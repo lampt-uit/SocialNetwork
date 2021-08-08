@@ -23,6 +23,7 @@ app.use('/api', require('./routes/auth.router'));
 app.use('/api', require('./routes/user.router'));
 app.use('/api', require('./routes/post.router'));
 app.use('/api', require('./routes/comment.router'));
+app.use('/api', require('./routes/notify.router'));
 
 const URI = process.env.MONGODB_URL;
 mongoose.connect(
