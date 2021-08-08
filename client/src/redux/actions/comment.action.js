@@ -7,7 +7,7 @@ import { GLOBALTYPES, EditData, DeleteData } from './global.type';
 import { POST_TYPES } from './post.action';
 
 export const createComment =
-	({ post, newComment, auth }) =>
+	({ post, newComment, auth, socket }) =>
 	async (dispatch) => {
 		const newPost = { ...post, comments: [...post.comments, newComment] };
 		// console.log({ post, newPost });
@@ -26,6 +26,9 @@ export const createComment =
 			const newData = { ...res.data.newComment, user: auth.user };
 			const newPost = { ...post, comments: [...post.comments, newData] };
 			dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+
+			//Socket
+			socket.emit('createComment', newPost);
 		} catch (error) {
 			dispatch({
 				type: GLOBALTYPES.ALERT,
@@ -35,7 +38,7 @@ export const createComment =
 	};
 
 export const updateComment =
-	({ comment, post, content, auth }) =>
+	({ comment, post, content, auth, socket }) =>
 	async (dispatch) => {
 		const newComment = EditData(post.comments, comment._id, {
 			...comment,
@@ -54,7 +57,7 @@ export const updateComment =
 	};
 
 export const likeComment =
-	({ comment, post, auth }) =>
+	({ comment, post, auth, socket }) =>
 	async (dispatch) => {
 		//In comment
 		const newComment = { ...comment, likes: [...comment.likes, auth.user] };
@@ -76,7 +79,7 @@ export const likeComment =
 	};
 
 export const unLikeComment =
-	({ comment, post, auth }) =>
+	({ comment, post, auth, socket }) =>
 	async (dispatch) => {
 		//In comment
 		const newComment = {
@@ -101,7 +104,7 @@ export const unLikeComment =
 	};
 
 export const deleteComment =
-	({ post, auth, comment }) =>
+	({ post, auth, comment, socket }) =>
 	async (dispatch) => {
 		//If Father comment is deleted => Children comment also deleted
 		const deleteArray = [
@@ -120,6 +123,7 @@ export const deleteComment =
 		};
 
 		dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+		socket.emit('deleteComment', newPost);
 
 		try {
 			deleteArray.forEach((item) => {

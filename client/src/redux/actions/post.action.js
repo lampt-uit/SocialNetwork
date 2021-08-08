@@ -99,13 +99,15 @@ export const updatePost =
 	};
 
 export const likePost =
-	({ post, auth }) =>
+	({ post, auth, socket }) =>
 	async (dispatch) => {
 		// console.log({ post });
 		const newPost = { ...post, likes: [...post.likes, auth.user] };
 		// console.log(newPost);
 
 		dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+		socket.emit('likePost', newPost);
+
 		try {
 			await patchDataAPI(`post/${post._id}/like`, null, auth.token);
 		} catch (error) {
@@ -117,7 +119,7 @@ export const likePost =
 	};
 
 export const unLikePost =
-	({ post, auth }) =>
+	({ post, auth, socket }) =>
 	async (dispatch) => {
 		// console.log({ post });
 		const newPost = {
@@ -127,6 +129,8 @@ export const unLikePost =
 		// console.log(newPost);
 
 		dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost });
+		socket.emit('unLikePost', newPost);
+
 		try {
 			await patchDataAPI(`post/${post._id}/unlike`, null, auth.token);
 		} catch (error) {

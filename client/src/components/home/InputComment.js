@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { createComment } from '../../redux/actions/comment.action';
 
 const InputComment = ({ children, post, onReply, setOnReply }) => {
-	const { auth } = useSelector((state) => state);
+	const { auth, socket } = useSelector((state) => state);
 	const dispatch = useDispatch();
 
 	const [content, setContent] = useState('');
@@ -30,7 +30,7 @@ const InputComment = ({ children, post, onReply, setOnReply }) => {
 		};
 		// console.log(newComment);
 
-		dispatch(createComment({ post, newComment, auth }));
+		dispatch(createComment({ post, newComment, auth, socket }));
 
 		if (setOnReply) return setOnReply(false);
 	};

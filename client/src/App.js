@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import io from 'socket.io-client';
 
 import PageRender from './customRouter/PageRender';
 import PrivateRouter from './customRouter/PrivateRouter';
@@ -15,6 +16,8 @@ import StatusModal from './components/StatusModal';
 import { refreshToken } from './redux/actions/auth.action';
 import { getPosts } from './redux/actions/post.action';
 import { getSuggestions } from './redux/actions/suggestion.action';
+import { GLOBALTYPES } from './redux/actions/global.type';
+import SocketClient from './SocketClient';
 
 function App() {
 	const { auth, status, modal } = useSelector((state) => state);
@@ -22,6 +25,12 @@ function App() {
 
 	useEffect(() => {
 		dispatch(refreshToken());
+		//Create socket
+		const socket = io();
+		dispatch({ type: GLOBALTYPES.SOCKET, payload: socket });
+
+		// clean useEffect
+		return () => socket.close();
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -40,6 +49,7 @@ function App() {
 				<div className='main'>
 					{auth.token && <Header />}
 					{status && <StatusModal />}
+					{auth.token && <SocketClient />}
 
 					<Route exact path='/' component={auth.token ? Home : Login} />
 					<Route exact path='/register' component={Register} />

@@ -13,7 +13,7 @@ class APIfeatures {
 		const limit = this.queryString.limit * 1 || 9;
 		const skip = (page - 1) * limit;
 		this.query = this.query.skip(skip).limit(limit);
-		console.log(this);
+		// console.log(this);
 		return this;
 	}
 }
@@ -48,7 +48,7 @@ const postController = {
 			).paginating();
 			const posts = await features.query
 				.sort('-createdAt')
-				.populate('user likes', 'avatar username fullname')
+				.populate('user likes', 'avatar username fullname followers')
 				.populate({
 					path: 'comments',
 					populate: {
