@@ -24,6 +24,7 @@
 	object-fit: cover;
 }
 
+/* Transition 	Icon */
 .post_thumb_display .post_thumb_menu {
 	position: absolute;
 	top: 0;
@@ -42,6 +43,7 @@
 	opacity: 1;
 }
 
+/* Icon Like and Comment */
 .post_thumb_display .post_thumb_menu i {
 	font-size: 1.8rem;
 	color: white;

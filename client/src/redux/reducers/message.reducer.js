@@ -1,0 +1,23 @@
+import { MESS_TYPES } from '../actions/message.action';
+
+const initialState = {
+	users: [],
+	resultUsers: 0,
+	data: [],
+	resultData: 0,
+	firstLoad: false
+};
+
+const messageReducer = (state = initialState, action) => {
+	switch (action.type) {
+		case MESS_TYPES.ADD_USER:
+			return {
+				...state,
+				users: [action.payload, ...state.users]
+			};
+		default:
+			return state;
+	}
+};
+
+export default messageReducer;

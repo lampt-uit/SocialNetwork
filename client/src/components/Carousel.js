@@ -25,7 +25,7 @@ const Carousel = ({ images, id }) => {
 							src={img.url}
 							className='d-block w-100'
 							style={{
-								maxHeight: '600px',
+								maxHeight: '1000px',
 								objectFit: 'cover',
 								filter: theme ? 'invert(1)' : 'invert(0)'
 							}}
