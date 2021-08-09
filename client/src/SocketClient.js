@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { GLOBALTYPES } from './redux/actions/global.type';
 import { POST_TYPES } from './redux/actions/post.action';
+import { NOTIFY_TYPES } from './redux/actions/notify.action';
 
 const SocketClient = () => {
 	const { auth, socket } = useSelector((state) => state);
@@ -72,6 +73,24 @@ const SocketClient = () => {
 
 		return () => socket.off('unFollowToClient');
 	}, [socket, dispatch, auth]);
+
+	//Create Notify
+	useEffect(() => {
+		socket.on('createNotifyToClient', (msg) => {
+			dispatch({ type: NOTIFY_TYPES.CREATE_NOTIFY, payload: msg });
+		});
+
+		return () => socket.off('createNotifyToClient');
+	}, [socket, dispatch]);
+
+	//Remove Notify
+	useEffect(() => {
+		socket.on('removeNotifyToClient', (msg) => {
+			dispatch({ type: NOTIFY_TYPES.REMOVE_NOTIFY, payload: msg });
+		});
+
+		return () => socket.off('removeNotifyToClient');
+	}, [socket, dispatch]);
 	return <div></div>;
 };
 

@@ -5,6 +5,7 @@ import {
 } from '../../utils/fetchData';
 import { GLOBALTYPES, EditData, DeleteData } from './global.type';
 import { POST_TYPES } from './post.action';
+import { createNotify, removeNotify } from './notify.action';
 
 export const createComment =
 	({ post, newComment, auth, socket }) =>
@@ -29,6 +30,20 @@ export const createComment =
 
 			//Socket
 			socket.emit('createComment', newPost);
+
+			//Notify to User
+			const msg = {
+				id: res.data.newComment._id,
+				text: newComment.reply
+					? 'mentioned you in a comment.'
+					: 'has commented on your post.',
+				recipients: newComment.reply ? [newComment.tag._id] : [post.user._id],
+				url: `/post/${post._id}`,
+				content: post.content,
+				image: post.images[0].url
+			};
+
+			dispatch(createNotify({ msg, auth, socket }));
 		} catch (error) {
 			dispatch({
 				type: GLOBALTYPES.ALERT,
@@ -128,6 +143,20 @@ export const deleteComment =
 		try {
 			deleteArray.forEach((item) => {
 				deleteDataAPI(`comment/${item._id}`, auth.token);
+
+				//Notify to User
+				const msg = {
+					id: item._id,
+					text: comment.reply
+						? 'mentioned you in a comment.'
+						: 'has commented on your post.',
+					recipients: comment.reply ? [comment.tag._id] : [post.user._id],
+					url: `/post/${post._id}`,
+					content: post.content,
+					image: post.images[0].url
+				};
+
+				dispatch(removeNotify({ msg, auth, socket }));
 			});
 		} catch (error) {
 			dispatch({
