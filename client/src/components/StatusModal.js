@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { GLOBALTYPES } from '../redux/actions/global.type';
 import { createPost, updatePost } from '../redux/actions/post.action';
 import Icons from './Icons';
+import { imageShow, videoShow } from '../utils/mediaShow';
 
 const StatusModal = () => {
 	const { auth, theme, status, socket } = useSelector((state) => state);
@@ -25,7 +26,7 @@ const StatusModal = () => {
 			if (!file) return (err = 'File does not exists.');
 
 			if (file.size > 1024 * 1024 * 5) {
-				return (err = 'The image largest is 5mb.');
+				return (err = 'The image/video largest is 5mb.');
 			}
 
 			return newImages.push(file);
@@ -33,29 +34,6 @@ const StatusModal = () => {
 
 		if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { errors: err } });
 		setImages([...images, ...newImages]);
-	};
-
-	const imageShow = (src) => {
-		return (
-			<img
-				src={src}
-				alt='images'
-				className='img-thumbnail'
-				style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
-			/>
-		);
-	};
-
-	const videoShow = (src) => {
-		return (
-			<video
-				src={src}
-				controls
-				alt='images'
-				className='img-thumbnail'
-				style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
-			/>
-		);
 	};
 
 	const deleteImage = (index) => {
@@ -176,18 +154,18 @@ const StatusModal = () => {
 								/> */}
 
 								{img.camera ? (
-									imageShow(img.camera)
+									imageShow(img.camera, theme)
 								) : img.url ? (
 									<>
 										{img.url.match(/video/i)
-											? videoShow(img.url)
-											: imageShow(img.url)}
+											? videoShow(img.url, theme)
+											: imageShow(img.url, theme)}
 									</>
 								) : (
 									<>
 										{img.type.match(/video/i)
-											? videoShow(URL.createObjectURL(img))
-											: imageShow(URL.createObjectURL(img))}
+											? videoShow(URL.createObjectURL(img, theme))
+											: imageShow(URL.createObjectURL(img, theme))}
 									</>
 								)}
 

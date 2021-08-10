@@ -27,7 +27,7 @@ const Carousel = ({ images, id }) => {
 								src={img.url}
 								className='d-block w-100'
 								style={{
-									// maxHeight: '1000px',
+									// height: '500px',
 									// objectFit: 'cover',
 									filter: theme ? 'invert(1)' : 'invert(0)'
 								}}
@@ -38,7 +38,7 @@ const Carousel = ({ images, id }) => {
 								src={img.url}
 								className='d-block w-100'
 								style={{
-									// maxHeight: '1000px',
+									// height: '500px',
 									// objectFit: 'cover',
 									filter: theme ? 'invert(1)' : 'invert(0)'
 								}}

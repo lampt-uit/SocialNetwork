@@ -1,7 +1,8 @@
 import React from 'react';
 import Avatar from '../Avatar';
+import { imageShow, videoShow } from '../../utils/mediaShow';
 
-const MsgDisplay = ({ user }) => {
+const MsgDisplay = ({ user, msg, theme }) => {
 	return (
 		<>
 			<div className='chat_title'>
@@ -9,18 +10,25 @@ const MsgDisplay = ({ user }) => {
 				<span>{user.username}</span>
 			</div>
 
-			<div className='chat_text'>
-				Lorem Ipsum is simply dummy text of the printing and typesetting
-				industry. Lorem Ipsum has been the industry's standard dummy text ever
-				since the 1500s, when an unknown printer took a galley of type and
-				scrambled it to make a type specimen book Lorem Ipsum is simply dummy
-				text of the printing and typesetting industry. Lorem Ipsum has been the
-				industry's standard dummy text ever since the 1500s, when an unknown
-				printer took a galley of type and scrambled it to make a type specimen
-				book
-			</div>
+			{msg.text && (
+				<div
+					className='chat_text'
+					style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
+				>
+					{msg.text}
+				</div>
+			)}
+			{msg.media.map((item, index) => (
+				<div key={index}>
+					{item.url.match(/video/i)
+						? videoShow(item.url, theme)
+						: imageShow(item.url, theme)}
+				</div>
+			))}
 
-			<div className='chat_time'>August 2021</div>
+			<div className='chat_time'>
+				{new Date(msg.createdAt).toLocaleString()}
+			</div>
 		</>
 	);
 };

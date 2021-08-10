@@ -33,7 +33,7 @@ const Icons = ({ setContent, content, theme }) => {
 			style={{ filter: theme ? 'invert(1)' : 'invert(0)', opacity: 1 }}
 		>
 			<span
-				className='nav-link position-relative'
+				className='nav-link position-relative px-1'
 				id='navbarDropdown'
 				role='button'
 				data-toggle='dropdown'
