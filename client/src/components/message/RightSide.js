@@ -8,7 +8,7 @@ import Icons from '../Icons';
 import { GLOBALTYPES } from '../../redux/actions/global.type';
 import { imageShow, videoShow } from '../../utils/mediaShow';
 import { imageUpload } from '../../utils/imageUpload';
-import { addMessage } from '../../redux/actions/message.action';
+import { addMessage, getMessages } from '../../redux/actions/message.action';
 import LoadIcon from '../../images/loading.gif';
 
 const RightSide = () => {
@@ -21,6 +21,7 @@ const RightSide = () => {
 	const [media, setMedia] = useState([]);
 	const [loadMedia, setLoadMedia] = useState(false);
 
+	//Set user into chat container
 	useEffect(() => {
 		const newUser = message.users.find((user) => user._id === id);
 		if (newUser) {
@@ -74,6 +75,17 @@ const RightSide = () => {
 		setLoadMedia(false);
 		dispatch(addMessage({ msg, auth, socket }));
 	};
+
+	//Get message from param userId => set content chat container
+	useEffect(() => {
+		if (id) {
+			const getMessagesData = async () => {
+				await dispatch(getMessages({ auth, id }));
+			};
+
+			getMessagesData();
+		}
+	}, [id, dispatch, auth]);
 	return (
 		<>
 			<div className='message_header'>

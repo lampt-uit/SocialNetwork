@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
 import UserCard from '../UserCard';
 import { GLOBALTYPES } from '../../redux/actions/global.type';
 import { getDataAPI } from '../../utils/fetchData';
-import { addUser } from '../../redux/actions/message.action';
+import { addUser, getConversations } from '../../redux/actions/message.action';
 
 const LeftSide = () => {
 	const { auth, message } = useSelector((state) => state);
@@ -15,6 +15,7 @@ const LeftSide = () => {
 	const history = useHistory();
 	const { id } = useParams();
 
+	//Get user search and setSearchUser
 	const handleSearch = async (e) => {
 		e.preventDefault();
 
@@ -31,6 +32,7 @@ const LeftSide = () => {
 		}
 	};
 
+	//Add user into chat container
 	const handleAddUser = (user) => {
 		setSearch('');
 		setSearchUsers([]);
@@ -38,10 +40,18 @@ const LeftSide = () => {
 		return history.push(`/message/${user._id}`);
 	};
 
+	//CSS user active
 	const isActive = (user) => {
 		if (id === user._id) return 'active';
 		return '';
 	};
+
+	//Get your conversations
+	useEffect(() => {
+		if (message.firstLoad) return;
+		dispatch(getConversations({ auth }));
+	}, [dispatch, auth, message.firstLoad]);
+
 	return (
 		<>
 			<form className='message_header' onSubmit={handleSearch}>
