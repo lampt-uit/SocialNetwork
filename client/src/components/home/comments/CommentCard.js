@@ -14,7 +14,7 @@ import {
 } from '../../../redux/actions/comment.action';
 
 const CommentCard = ({ children, comment, post, commentId }) => {
-	const { auth } = useSelector((state) => state);
+	const { auth, theme } = useSelector((state) => state);
 	const [content, setContent] = useState('');
 	const [readMore, setReadMore] = useState(false);
 	const [isLike, setIsLike] = useState(false);
@@ -80,7 +80,13 @@ const CommentCard = ({ children, comment, post, commentId }) => {
 			</Link>
 
 			<div className='comment_content'>
-				<div className='flex-fill'>
+				<div
+					className='flex-fill'
+					style={{
+						filter: theme ? 'invert(1)' : 'invert(0)',
+						color: theme ? 'white' : '#111'
+					}}
+				>
 					{onEdit ? (
 						<textarea
 							rows='5'

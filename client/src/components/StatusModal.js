@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { GLOBALTYPES } from '../redux/actions/global.type';
 import { createPost, updatePost } from '../redux/actions/post.action';
+import Icons from './Icons';
 
 const StatusModal = () => {
 	const { auth, theme, status, socket } = useSelector((state) => state);
@@ -23,8 +24,8 @@ const StatusModal = () => {
 		files.forEach((file) => {
 			if (!file) return (err = 'File does not exists.');
 
-			if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
-				return (err = 'Format file is incorrect.');
+			if (file.size > 1024 * 1024 * 5) {
+				return (err = 'The image largest is 5mb.');
 			}
 
 			return newImages.push(file);
@@ -32,6 +33,29 @@ const StatusModal = () => {
 
 		if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { errors: err } });
 		setImages([...images, ...newImages]);
+	};
+
+	const imageShow = (src) => {
+		return (
+			<img
+				src={src}
+				alt='images'
+				className='img-thumbnail'
+				style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
+			/>
+		);
+	};
+
+	const videoShow = (src) => {
+		return (
+			<video
+				src={src}
+				controls
+				alt='images'
+				className='img-thumbnail'
+				style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
+			/>
+		);
 	};
 
 	const deleteImage = (index) => {
@@ -124,11 +148,20 @@ const StatusModal = () => {
 						value={content}
 						placeholder={`${auth.user.username}, what are you thinking ?`}
 						onChange={(e) => setContent(e.target.value)}
+						style={{
+							filter: theme ? 'invert(1)' : 'invert(0)',
+							color: theme ? 'white' : '#111',
+							background: theme ? 'rgba(0,0,0,.03)' : ''
+						}}
 					></textarea>
+					<div className='d-flex'>
+						<div className='flex-fill'></div>
+						<Icons setContent={setContent} content={content} theme={theme} />
+					</div>
 					<div className='show_images'>
-						{images.map((image, index) => (
+						{images.map((img, index) => (
 							<div key={index} id='file_img'>
-								<img
+								{/* <img
 									//Check image selfie or image upload
 									src={
 										image.camera
@@ -140,7 +173,24 @@ const StatusModal = () => {
 									alt='images'
 									className='img-thumbnail'
 									style={{ filter: theme ? 'invert(1)' : 'invert(0)' }}
-								/>
+								/> */}
+
+								{img.camera ? (
+									imageShow(img.camera)
+								) : img.url ? (
+									<>
+										{img.url.match(/video/i)
+											? videoShow(img.url)
+											: imageShow(img.url)}
+									</>
+								) : (
+									<>
+										{img.type.match(/video/i)
+											? videoShow(URL.createObjectURL(img))
+											: imageShow(URL.createObjectURL(img))}
+									</>
+								)}
+
 								<span onClick={() => deleteImage(index)}>&times;</span>
 							</div>
 						))}
@@ -173,7 +223,7 @@ const StatusModal = () => {
 										name='file'
 										id='file'
 										multiple
-										accept='image/*'
+										accept='image/*,video/*'
 										onChange={handleChangeImages}
 									/>
 								</div>

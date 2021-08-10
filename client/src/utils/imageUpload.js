@@ -25,13 +25,10 @@ export const imageUpload = async (images) => {
 		formData.append('upload_preset', 'uctzbygv');
 		formData.append('cloud_name', 'lampt');
 
-		const res = await fetch(
-			'https://api.cloudinary.com/v1_1/lampt/image/upload',
-			{
-				method: 'POST',
-				body: formData
-			}
-		);
+		const res = await fetch('https://api.cloudinary.com/v1_1/lampt/upload', {
+			method: 'POST',
+			body: formData
+		});
 
 		const data = await res.json();
 		// console.log(data);

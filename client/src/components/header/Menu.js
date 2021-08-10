@@ -44,7 +44,10 @@ const Menu = () => {
 					>
 						<span
 							className='material-icons'
-							style={{ color: notify.data.length > 0 ? 'crimson' : '' }}
+							style={{
+								color: notify.data.length > 0 ? 'crimson' : ''
+								// filter: theme ? 'invert(1)' : 'invert(0)'
+							}}
 						>
 							{' '}
 							favorite

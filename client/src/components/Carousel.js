@@ -21,16 +21,30 @@ const Carousel = ({ images, id }) => {
 			<div className='carousel-inner'>
 				{images.map((img, index) => (
 					<div className={`carousel-item ${isActive(index)}`} key={index}>
-						<img
-							src={img.url}
-							className='d-block w-100'
-							style={{
-								maxHeight: '1000px',
-								objectFit: 'cover',
-								filter: theme ? 'invert(1)' : 'invert(0)'
-							}}
-							alt={img.url}
-						/>
+						{img.url.match(/video/i) ? (
+							<video
+								controls
+								src={img.url}
+								className='d-block w-100'
+								style={{
+									// maxHeight: '1000px',
+									// objectFit: 'cover',
+									filter: theme ? 'invert(1)' : 'invert(0)'
+								}}
+								alt={img.url}
+							/>
+						) : (
+							<img
+								src={img.url}
+								className='d-block w-100'
+								style={{
+									// maxHeight: '1000px',
+									// objectFit: 'cover',
+									filter: theme ? 'invert(1)' : 'invert(0)'
+								}}
+								alt={img.url}
+							/>
+						)}
 					</div>
 				))}
 			</div>
@@ -39,6 +53,7 @@ const Carousel = ({ images, id }) => {
 				href={`#images${id}`}
 				role='button'
 				data-slide='prev'
+				style={{ width: '5%' }}
 			>
 				<span className='carousel-control-prev-icon' aria-hidden='true'></span>
 				<span className='sr-only'>Previous</span>
@@ -48,6 +63,7 @@ const Carousel = ({ images, id }) => {
 				href={`#images${id}`}
 				role='button'
 				data-slide='next'
+				style={{ width: '5%' }}
 			>
 				<span className='carousel-control-next-icon' aria-hidden='true'></span>
 				<span className='sr-only'>Next</span>
