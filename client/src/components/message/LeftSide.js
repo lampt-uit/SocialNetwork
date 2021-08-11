@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 
@@ -14,6 +14,8 @@ const LeftSide = () => {
 	const [searchUsers, setSearchUsers] = useState([]);
 	const history = useHistory();
 	const { id } = useParams();
+	const pageEnd = useRef();
+	const [page, setPage] = useState(0);
 
 	//Get user search and setSearchUser
 	const handleSearch = async (e) => {
@@ -52,6 +54,27 @@ const LeftSide = () => {
 		dispatch(getConversations({ auth }));
 	}, [dispatch, auth, message.firstLoad]);
 
+	//Load more
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					setPage((p) => p + 1);
+				}
+			},
+			{
+				threshold: 0.1
+			}
+		);
+
+		observer.observe(pageEnd.current);
+	}, [setPage]);
+
+	useEffect(() => {
+		if (message.resultUsers >= (page - 1) * 9 && page > 1) {
+			dispatch(getConversations({ auth, page }));
+		}
+	}, [message.resultUsers, page, auth, dispatch]);
 	return (
 		<>
 			<form className='message_header' onSubmit={handleSearch}>
@@ -94,6 +117,9 @@ const LeftSide = () => {
 						))}
 					</>
 				)}
+				<button ref={pageEnd} style={{ opacity: 0 }}>
+					load More
+				</button>
 			</div>
 		</>
 	);

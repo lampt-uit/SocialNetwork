@@ -101,6 +101,14 @@ const SocketServer = (socket) => {
 			});
 		}
 	});
+
+	//Add Message
+	socket.on('addMessage', (msg) => {
+		// console.log(msg);
+		// Check recipient online for realtime
+		const user = users.find((user) => user.id === msg.recipient);
+		user && socket.to(`${user.socketId}`).emit('addMessageToClient', msg);
+	});
 };
 
 module.exports = SocketServer;

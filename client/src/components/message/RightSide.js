@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
@@ -8,7 +8,11 @@ import Icons from '../Icons';
 import { GLOBALTYPES } from '../../redux/actions/global.type';
 import { imageShow, videoShow } from '../../utils/mediaShow';
 import { imageUpload } from '../../utils/imageUpload';
-import { addMessage, getMessages } from '../../redux/actions/message.action';
+import {
+	addMessage,
+	getMessages,
+	loadMoreMessages
+} from '../../redux/actions/message.action';
 import LoadIcon from '../../images/loading.gif';
 
 const RightSide = () => {
@@ -21,8 +25,33 @@ const RightSide = () => {
 	const [media, setMedia] = useState([]);
 	const [loadMedia, setLoadMedia] = useState(false);
 
+	const refDisplay = useRef();
+	const pageEnd = useRef();
+
+	const [data, setData] = useState([]);
+	const [result, setResult] = useState(9);
+	const [page, setPage] = useState(0);
+	const [isLoadMore, setIsLoadMore] = useState(0);
+
+	useEffect(() => {
+		const newData = message.data.find((item) => item._id === id);
+		// console.log(newData);
+
+		if (newData) {
+			setData(newData.messages);
+			setResult(newData.result);
+			setPage(newData.page);
+		}
+	}, [message.data, id]);
+
 	//Set user into chat container
 	useEffect(() => {
+		//Check id params and user  => scroll to end => add user into chat container
+		if (id && message.users.length > 0) {
+			setTimeout(() => {
+				refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+			});
+		}
 		const newUser = message.users.find((user) => user._id === id);
 		if (newUser) {
 			setUser(newUser);
@@ -73,19 +102,62 @@ const RightSide = () => {
 		};
 
 		setLoadMedia(false);
-		dispatch(addMessage({ msg, auth, socket }));
+
+		//Wait have newest message
+		await dispatch(addMessage({ msg, auth, socket }));
+		//Auto Scroll to newest message
+		if (refDisplay.current) {
+			refDisplay.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'end'
+			});
+		}
 	};
 
 	//Get message from param userId => set content chat container
 	useEffect(() => {
-		if (id) {
-			const getMessagesData = async () => {
+		const getMessagesData = async () => {
+			//If param id doest not exits into data => call API
+			if (message.data.every((item) => item._id !== id)) {
+				//Time wait call API
 				await dispatch(getMessages({ auth, id }));
-			};
+				//Auto Scroll to newest message
+				setTimeout(() => {
+					refDisplay.current.scrollIntoView({
+						behavior: 'smooth',
+						block: 'end'
+					});
+				});
+			}
+		};
+		getMessagesData();
+	}, [id, dispatch, auth, message.data]);
 
-			getMessagesData();
+	//Load more
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting) {
+					setIsLoadMore((p) => p + 1);
+				}
+			},
+			{
+				threshold: 0.1
+			}
+		);
+		observer.observe(pageEnd.current);
+	}, [setIsLoadMore]);
+
+	useEffect(() => {
+		if (isLoadMore > 1) {
+			if (result >= page * 9) {
+				dispatch(loadMoreMessages({ auth, id, page: page + 1 }));
+				setIsLoadMore(1);
+			}
 		}
-	}, [id, dispatch, auth]);
+		// eslint-disable-next-line
+	}, [isLoadMore]);
+
 	return (
 		<>
 			<div className='message_header'>
@@ -101,8 +173,11 @@ const RightSide = () => {
 				className='chat_container'
 				style={{ height: media.length > 0 ? 'calc(100% - 180px)' : ' ' }}
 			>
-				<div className='chat_display'>
-					{message.data.map((msg, index) => (
+				<div className='chat_display' ref={refDisplay}>
+					<button style={{ marginTop: '-25px', opacity: 0 }} ref={pageEnd}>
+						Load More
+					</button>
+					{data.map((msg, index) => (
 						<div key={index}>
 							{msg.sender !== auth.user._id && (
 								<div className='chat_row other_message'>
@@ -112,7 +187,12 @@ const RightSide = () => {
 
 							{msg.sender === auth.user._id && (
 								<div className='chat_row you_message'>
-									<MsgDisplay user={auth.user} msg={msg} theme={theme} />
+									<MsgDisplay
+										user={auth.user}
+										msg={msg}
+										theme={theme}
+										data={data}
+									/>
 								</div>
 							)}
 						</div>
