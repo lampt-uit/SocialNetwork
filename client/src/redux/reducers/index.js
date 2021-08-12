@@ -14,6 +14,7 @@ import socket from './socket.reducer';
 import notify from './notify.reducer';
 import message from './message.reducer';
 import online from './online.reducer';
+import call from './call.reducer';
 
 export default combineReducers({
 	auth,
@@ -29,5 +30,6 @@ export default combineReducers({
 	socket,
 	notify,
 	message,
-	online
+	online,
+	call
 });
