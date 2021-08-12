@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 
 import UserCard from '../UserCard';
 import MsgDisplay from './MsgDisplay';
@@ -11,13 +11,15 @@ import { imageUpload } from '../../utils/imageUpload';
 import {
 	addMessage,
 	getMessages,
-	loadMoreMessages
+	loadMoreMessages,
+	deleteConversation
 } from '../../redux/actions/message.action';
 import LoadIcon from '../../images/loading.gif';
 
 const RightSide = () => {
 	const { auth, message, theme, socket } = useSelector((state) => state);
 	const dispatch = useDispatch();
+	const history = useHistory();
 
 	const { id } = useParams();
 	const [user, setUser] = useState([]);
@@ -50,7 +52,7 @@ const RightSide = () => {
 		if (id && message.users.length > 0) {
 			setTimeout(() => {
 				refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-			});
+			}, 50);
 		}
 		const newUser = message.users.find((user) => user._id === id);
 		if (newUser) {
@@ -114,6 +116,11 @@ const RightSide = () => {
 		}
 	};
 
+	const handleDeleteConversation = () => {
+		dispatch(deleteConversation({ auth, id }));
+		return history.push('/message');
+	};
+
 	//Get message from param userId => set content chat container
 	useEffect(() => {
 		const getMessagesData = async () => {
@@ -127,7 +134,7 @@ const RightSide = () => {
 						behavior: 'smooth',
 						block: 'end'
 					});
-				});
+				}, 50);
 			}
 		};
 		getMessagesData();
@@ -160,10 +167,13 @@ const RightSide = () => {
 
 	return (
 		<>
-			<div className='message_header'>
+			<div className='message_header' style={{ cursor: 'pointer' }}>
 				{user.length !== 0 && (
 					<UserCard user={user}>
-						<i className='fas fa-trash text-danger' />
+						<i
+							className='fas fa-trash text-danger'
+							onClick={handleDeleteConversation}
+						/>
 					</UserCard>
 				)}
 			</div>
