@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import io from 'socket.io-client';
+import Peer from 'peerjs';
 
 import PageRender from './customRouter/PageRender';
 import PrivateRouter from './customRouter/PrivateRouter';
@@ -63,6 +64,14 @@ function App() {
 		// At last, if the user has denied notifications, and you
 		// want to be respectful there is no need to bother them any more.
 	}, []);
+
+	useEffect(() => {
+		const newPeer = new Peer(undefined, {
+			host: '/',
+			port: 3001
+		});
+		dispatch({ type: GLOBALTYPES.PEER, payload: newPeer });
+	}, [dispatch]);
 
 	return (
 		<Router>

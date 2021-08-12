@@ -15,6 +15,7 @@ import notify from './notify.reducer';
 import message from './message.reducer';
 import online from './online.reducer';
 import call from './call.reducer';
+import peer from './peer.reducer';
 
 export default combineReducers({
 	auth,
@@ -31,5 +32,6 @@ export default combineReducers({
 	notify,
 	message,
 	online,
-	call
+	call,
+	peer
 });
