@@ -8,7 +8,7 @@ const Carousel = ({ images, id }) => {
 	};
 	return (
 		<div id={`images${id}`} className='carousel slide' data-ride='carousel'>
-			<ol className='carousel-indicators'>
+			<ol className='carousel-indicators' style={{ zIndex: 1 }}>
 				{images.map((img, index) => (
 					<li
 						key={index}

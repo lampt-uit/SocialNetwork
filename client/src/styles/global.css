@@ -76,25 +76,18 @@ img {
 
 /* Response */
 
-@media (max-width: 768px) {
+@media (max-width: 766px) {
+	.header .navbar .logo {
+		display: none;
+	}
 	.header .menu {
-		position: absolute;
-		top: calc(100vh - 50px);
-		left: 0;
 		width: 100%;
-		height: 50px;
-		box-shadow: 0 0 10px #ddd;
-		z-index: 2;
-		background: #f8f9fa;
-		border: 1px solid rgb(0, 0, 0, 0.125);
+		height: 40px;
 	}
 	.header .menu .navbar-nav {
 		display: flex;
 		justify-content: space-around;
-	}
-	.header .menu .dropdown-menu {
-		bottom: 100%;
-		top: auto;
+		align-items: center;
 	}
 	.header .search_form {
 		width: 100%;
@@ -105,13 +98,16 @@ img {
 	.header .logo h1 {
 		font-size: 1.5rem;
 	}
-
-	.wrap_page {
-		margin-bottom: 60px;
-	}
-
 	.message {
 		height: calc(100vh - 100px);
+	}
+	.right_mess,
+	.left_mess {
+		display: none;
+	}
+
+	.status {
+		padding: 20px 10px;
 	}
 }
 

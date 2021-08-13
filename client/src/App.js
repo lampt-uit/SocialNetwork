@@ -67,8 +67,8 @@ function App() {
 
 	useEffect(() => {
 		const newPeer = new Peer(undefined, {
-			host: '/',
-			port: 3001
+			path: '/',
+			secure: true
 		});
 		dispatch({ type: GLOBALTYPES.PEER, payload: newPeer });
 	}, [dispatch]);
@@ -88,10 +88,8 @@ function App() {
 					<Route exact path='/' component={auth.token ? Home : Login} />
 					<Route exact path='/register' component={Register} />
 
-					<div className='wrap_page'>
-						<PrivateRouter exact path='/:page' component={PageRender} />
-						<PrivateRouter exact path='/:page/:id' component={PageRender} />
-					</div>
+					<PrivateRouter exact path='/:page' component={PageRender} />
+					<PrivateRouter exact path='/:page/:id' component={PageRender} />
 				</div>
 			</div>
 		</Router>

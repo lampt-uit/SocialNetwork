@@ -42,6 +42,7 @@ const RightSideBar = () => {
 					href='https://www.facebook.com/tanlam.pham.92/'
 					target='_blank'
 					rel='noreferrer'
+					style={{ wordBreak: 'break-all' }}
 				>
 					https://www.facebook.com/tanlam.pham.92/
 				</a>
